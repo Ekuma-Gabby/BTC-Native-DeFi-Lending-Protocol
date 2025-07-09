@@ -584,22 +584,3 @@
   )
 )
 
-(define-read-only (get-liquidation-protection-status (user principal))
-  (map-get? liquidation-protection { user: user })
-)
-
-(define-read-only (get-cross-chain-operation-status (operation-id uint))
-  (map-get? cross-chain-operations { operation-id: operation-id })
-)
-
-(define-read-only (get-automated-order (order-id uint))
-  (map-get? automated-orders { order-id: order-id })
-)
-
-(define-read-only (get-daily-stats (date uint))
-  (map-get? daily-protocol-stats { date: date })
-)
-
-(define-read-only (get-user-activity-stats (user principal))
-  (map-get? user-activity-stats { user: user })
-)
