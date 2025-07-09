@@ -518,3 +518,68 @@
     liquidations-count: uint
   }
 )
+
+(define-map user-activity-stats
+  { user: principal }
+  {
+    total-supplied: uint,
+    total-borrowed: uint,
+    liquidations-experienced: uint,
+    last-activity-block: uint,
+    rewards-earned: uint
+  }
+)
+
+(define-public (update-daily-stats 
+    (date uint) 
+    (tvl uint) 
+    (total-borrowed uint) 
+    (volume uint) 
+    (users uint) 
+    (liquidations uint)
+  )
+  (begin
+    (try! (check-owner))
+    (map-set daily-protocol-stats
+      { date: date }
+      {
+        total-value-locked: tvl,
+        total-borrowed: total-borrowed,
+        daily-volume: volume,
+        active-users: users,
+        liquidations-count: liquidations
+      }
+    )
+    (ok true)
+  )
+)
+
+(define-private (get-available-liquidity (asset-contract principal))
+  (let 
+    (
+      (market (unwrap-panic (map-get? market-data { asset-contract: asset-contract })))
+    )
+    (- (get total-supplied market) (get total-borrowed market))
+  )
+)
+
+(define-private (get-user-voting-power (user principal))
+  ;; Simplified: based on supplied assets + governance token balance
+  u100000 ;; Placeholder implementation
+)
+
+(define-read-only (get-flash-loan-fee)
+  (var-get flash-loan-fee)
+)
+
+(define-read-only (get-user-pending-rewards (user principal))
+  (let 
+    (
+      (user-data (map-get? user-rewards { user: user }))
+    )
+    (match user-data
+      data (get pending-rewards data)
+      u0
+    )
+  )
+)
